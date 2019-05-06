@@ -1,0 +1,2720 @@
+<?xml version="1.0" ?>
+<template encoding-version="1.1">
+  <description>1.	Bring in real time tweets with hashtags - #syncfusion, #dashboardcloud
+2.	Data preparation � clean and process json data into required flat schema
+3.	Perform Sentiment analysis over the tweeted text using Stanford core NLP.
+4.	Move the final processed data along with sentiment score into a SQL data base.</description>
+  <groupId>207602a1-016a-1000-e007-c0be385cd574</groupId>
+  <name>TwitterSentimentAnalysis</name>
+  <snippet>
+    <processGroups>
+      <id>12e7d8f2-4ad0-33d2-0000-000000000000</id>
+      <parentGroupId>f75b092e-4eee-337b-0000-000000000000</parentGroupId>
+      <position>
+        <x>0.0</x>
+        <y>0.0</y>
+      </position>
+      <comments></comments>
+      <contents>
+        <connections>
+          <id>a7493a19-0e31-3dd9-0000-000000000000</id>
+          <parentGroupId>12e7d8f2-4ad0-33d2-0000-000000000000</parentGroupId>
+          <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+          <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+          <destination>
+            <groupId>12e7d8f2-4ad0-33d2-0000-000000000000</groupId>
+            <id>11e8c1a5-8a13-32d4-0000-000000000000</id>
+            <type>PROCESSOR</type>
+          </destination>
+          <flowFileExpiration>0 sec</flowFileExpiration>
+          <labelIndex>1</labelIndex>
+          <name></name>
+          <source>
+            <groupId>326278fa-845b-3619-0000-000000000000</groupId>
+            <id>f8edb58f-3f8b-31a8-0000-000000000000</id>
+            <type>OUTPUT_PORT</type>
+          </source>
+          <zIndex>0</zIndex>
+        </connections>
+        <connections>
+          <id>06011567-3f26-3d90-0000-000000000000</id>
+          <parentGroupId>12e7d8f2-4ad0-33d2-0000-000000000000</parentGroupId>
+          <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+          <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+          <destination>
+            <groupId>326278fa-845b-3619-0000-000000000000</groupId>
+            <id>fd0e9d3b-ed4e-3c53-0000-000000000000</id>
+            <type>INPUT_PORT</type>
+          </destination>
+          <flowFileExpiration>0 sec</flowFileExpiration>
+          <labelIndex>1</labelIndex>
+          <name></name>
+          <selectedRelationships>success</selectedRelationships>
+          <source>
+            <groupId>12e7d8f2-4ad0-33d2-0000-000000000000</groupId>
+            <id>9ec697c9-368f-32a5-0000-000000000000</id>
+            <type>PROCESSOR</type>
+          </source>
+          <zIndex>0</zIndex>
+        </connections>
+        <connections>
+          <id>6afae769-be5c-3580-0000-000000000000</id>
+          <parentGroupId>12e7d8f2-4ad0-33d2-0000-000000000000</parentGroupId>
+          <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+          <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+          <destination>
+            <groupId>16c4ef00-bf87-31a1-0000-000000000000</groupId>
+            <id>c62f0637-d9a2-3d2b-0000-000000000000</id>
+            <type>INPUT_PORT</type>
+          </destination>
+          <flowFileExpiration>0 sec</flowFileExpiration>
+          <labelIndex>1</labelIndex>
+          <name></name>
+          <selectedRelationships>output stream</selectedRelationships>
+          <source>
+            <groupId>12e7d8f2-4ad0-33d2-0000-000000000000</groupId>
+            <id>11e8c1a5-8a13-32d4-0000-000000000000</id>
+            <type>PROCESSOR</type>
+          </source>
+          <zIndex>0</zIndex>
+        </connections>
+        <controllerServices>
+          <id>efe45c30-842f-3e41-0000-000000000000</id>
+          <parentGroupId>12e7d8f2-4ad0-33d2-0000-000000000000</parentGroupId>
+          <state>ENABLED</state>
+          <bundle>
+            <artifact>nifi-dbcp-service-nar</artifact>
+            <group>org.apache.nifi</group>
+            <version>1.4.0</version>
+          </bundle>
+          <comments></comments>
+          <descriptors>
+            <entry>
+              <key>Database Connection URL</key>
+              <value>
+                <description>A database connection URL used to connect to a database. May contain database system name, host, port, database name and some parameters. The exact syntax of a database connection URL is specified by your DBMS.</description>
+                <displayName>Database Connection URL</displayName>
+                <dynamic>false</dynamic>
+                <name>Database Connection URL</name>
+                <required>true</required>
+                <sensitive>false</sensitive>
+                <supportsEl>true</supportsEl>
+              </value>
+            </entry>
+            <entry>
+              <key>Database Driver Class Name</key>
+              <value>
+                <description>Database driver class name</description>
+                <displayName>Database Driver Class Name</displayName>
+                <dynamic>false</dynamic>
+                <name>Database Driver Class Name</name>
+                <required>true</required>
+                <sensitive>false</sensitive>
+                <supportsEl>true</supportsEl>
+              </value>
+            </entry>
+            <entry>
+              <key>DBCP-database-driver-locations</key>
+              <value>
+                <description>Comma-separated list of files/folders and/or URLs containing the driver JAR and its dependencies (if any). For example '/var/tmp/mariadb-java-client-1.1.7.jar'</description>
+                <displayName>Database Driver Location(s)</displayName>
+                <dynamic>false</dynamic>
+                <name>DBCP-database-driver-locations</name>
+                <required>false</required>
+                <sensitive>false</sensitive>
+                <supportsEl>true</supportsEl>
+              </value>
+            </entry>
+            <entry>
+              <key>Database User</key>
+              <value>
+                <description>Database user name</description>
+                <displayName>Database User</displayName>
+                <dynamic>false</dynamic>
+                <name>Database User</name>
+                <required>false</required>
+                <sensitive>false</sensitive>
+                <supportsEl>true</supportsEl>
+              </value>
+            </entry>
+            <entry>
+              <key>Password</key>
+              <value>
+                <description>The password for the database user</description>
+                <displayName>Password</displayName>
+                <dynamic>false</dynamic>
+                <name>Password</name>
+                <required>false</required>
+                <sensitive>true</sensitive>
+                <supportsEl>true</supportsEl>
+              </value>
+            </entry>
+            <entry>
+              <key>Max Wait Time</key>
+              <value>
+                <defaultValue>500 millis</defaultValue>
+                <description>The maximum amount of time that the pool will wait (when there are no available connections)  for a connection to be returned before failing, or -1 to wait indefinitely. </description>
+                <displayName>Max Wait Time</displayName>
+                <dynamic>false</dynamic>
+                <name>Max Wait Time</name>
+                <required>true</required>
+                <sensitive>false</sensitive>
+                <supportsEl>false</supportsEl>
+              </value>
+            </entry>
+            <entry>
+              <key>Max Total Connections</key>
+              <value>
+                <defaultValue>8</defaultValue>
+                <description>The maximum number of active connections that can be allocated from this pool at the same time,  or negative for no limit.</description>
+                <displayName>Max Total Connections</displayName>
+                <dynamic>false</dynamic>
+                <name>Max Total Connections</name>
+                <required>true</required>
+                <sensitive>false</sensitive>
+                <supportsEl>false</supportsEl>
+              </value>
+            </entry>
+            <entry>
+              <key>Validation-query</key>
+              <value>
+                <description>Validation query used to validate connections before returning them. When connection is invalid, it get's dropped and new valid connection will be returned. Note!! Using validation might have some performance penalty.</description>
+                <displayName>Validation query</displayName>
+                <dynamic>false</dynamic>
+                <name>Validation-query</name>
+                <required>false</required>
+                <sensitive>false</sensitive>
+                <supportsEl>true</supportsEl>
+              </value>
+            </entry>
+          </descriptors>
+          <name>TwitterSQLServer</name>
+          <persistsState>false</persistsState>
+          <properties>
+            <entry>
+              <key>Database Connection URL</key>
+              <value>jdbc:sqlserver://Hostname:1433;database=development</value>
+            </entry>
+            <entry>
+              <key>Database Driver Class Name</key>
+              <value>com.microsoft.sqlserver.jdbc.SQLServerDriver</value>
+            </entry>
+            <entry>
+              <key>DBCP-database-driver-locations</key>
+              <value>C:\Development\sqljdbc42.jar</value>
+            </entry>
+            <entry>
+              <key>Database User</key>
+              <value>sa</value>
+            </entry>
+            <entry>
+              <key>Password</key>
+              <value>3cf8ca0d8a8bb44829942c76bc954b94055b83815dd00856c9b42779d216e526</value>
+            </entry>
+            <entry>
+              <key>Max Wait Time</key>
+              <value>500 millis</value>
+            </entry>
+            <entry>
+              <key>Max Total Connections</key>
+              <value>8</value>
+            </entry>
+            <entry>
+              <key>Validation-query</key>
+            </entry>
+          </properties>
+          <type>org.apache.nifi.dbcp.DBCPConnectionPool</type>
+        </controllerServices>
+        <processGroups>
+          <id>16c4ef00-bf87-31a1-0000-000000000000</id>
+          <parentGroupId>12e7d8f2-4ad0-33d2-0000-000000000000</parentGroupId>
+          <position>
+            <x>-521.6957860618653</x>
+            <y>356.42102537839247</y>
+          </position>
+          <comments></comments>
+          <contents>
+            <connections>
+              <id>9ca67d4a-f751-3753-0000-000000000000</id>
+              <parentGroupId>16c4ef00-bf87-31a1-0000-000000000000</parentGroupId>
+              <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+              <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+              <destination>
+                <groupId>16c4ef00-bf87-31a1-0000-000000000000</groupId>
+                <id>e8621ca5-8a44-384b-0000-000000000000</id>
+                <type>PROCESSOR</type>
+              </destination>
+              <flowFileExpiration>0 sec</flowFileExpiration>
+              <labelIndex>1</labelIndex>
+              <name></name>
+              <selectedRelationships>sql</selectedRelationships>
+              <source>
+                <groupId>16c4ef00-bf87-31a1-0000-000000000000</groupId>
+                <id>f4d6bfb0-9ba4-345e-0000-000000000000</id>
+                <type>PROCESSOR</type>
+              </source>
+              <zIndex>0</zIndex>
+            </connections>
+            <connections>
+              <id>368eeb46-967f-3043-0000-000000000000</id>
+              <parentGroupId>16c4ef00-bf87-31a1-0000-000000000000</parentGroupId>
+              <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+              <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+              <destination>
+                <groupId>16c4ef00-bf87-31a1-0000-000000000000</groupId>
+                <id>398a152c-bbfe-323c-0000-000000000000</id>
+                <type>PROCESSOR</type>
+              </destination>
+              <flowFileExpiration>0 sec</flowFileExpiration>
+              <labelIndex>1</labelIndex>
+              <name></name>
+              <selectedRelationships>matched</selectedRelationships>
+              <source>
+                <groupId>16c4ef00-bf87-31a1-0000-000000000000</groupId>
+                <id>ced6f784-c62d-3019-0000-000000000000</id>
+                <type>PROCESSOR</type>
+              </source>
+              <zIndex>0</zIndex>
+            </connections>
+            <connections>
+              <id>4a1cd4f5-c193-32ad-0000-000000000000</id>
+              <parentGroupId>16c4ef00-bf87-31a1-0000-000000000000</parentGroupId>
+              <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+              <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+              <destination>
+                <groupId>16c4ef00-bf87-31a1-0000-000000000000</groupId>
+                <id>ef06f7ad-a3a0-3a26-0000-000000000000</id>
+                <type>PROCESSOR</type>
+              </destination>
+              <flowFileExpiration>0 sec</flowFileExpiration>
+              <labelIndex>1</labelIndex>
+              <name></name>
+              <selectedRelationships>success</selectedRelationships>
+              <source>
+                <groupId>16c4ef00-bf87-31a1-0000-000000000000</groupId>
+                <id>398a152c-bbfe-323c-0000-000000000000</id>
+                <type>PROCESSOR</type>
+              </source>
+              <zIndex>0</zIndex>
+            </connections>
+            <connections>
+              <id>521c0440-8759-3498-0000-000000000000</id>
+              <parentGroupId>16c4ef00-bf87-31a1-0000-000000000000</parentGroupId>
+              <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+              <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+              <destination>
+                <groupId>16c4ef00-bf87-31a1-0000-000000000000</groupId>
+                <id>f4d6bfb0-9ba4-345e-0000-000000000000</id>
+                <type>PROCESSOR</type>
+              </destination>
+              <flowFileExpiration>0 sec</flowFileExpiration>
+              <labelIndex>1</labelIndex>
+              <name></name>
+              <selectedRelationships>success</selectedRelationships>
+              <source>
+                <groupId>16c4ef00-bf87-31a1-0000-000000000000</groupId>
+                <id>ef06f7ad-a3a0-3a26-0000-000000000000</id>
+                <type>PROCESSOR</type>
+              </source>
+              <zIndex>0</zIndex>
+            </connections>
+            <connections>
+              <id>61389637-4041-3989-0000-000000000000</id>
+              <parentGroupId>16c4ef00-bf87-31a1-0000-000000000000</parentGroupId>
+              <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+              <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+              <destination>
+                <groupId>16c4ef00-bf87-31a1-0000-000000000000</groupId>
+                <id>ced6f784-c62d-3019-0000-000000000000</id>
+                <type>PROCESSOR</type>
+              </destination>
+              <flowFileExpiration>0 sec</flowFileExpiration>
+              <labelIndex>1</labelIndex>
+              <name></name>
+              <source>
+                <groupId>16c4ef00-bf87-31a1-0000-000000000000</groupId>
+                <id>c62f0637-d9a2-3d2b-0000-000000000000</id>
+                <type>INPUT_PORT</type>
+              </source>
+              <zIndex>0</zIndex>
+            </connections>
+            <inputPorts>
+              <id>c62f0637-d9a2-3d2b-0000-000000000000</id>
+              <parentGroupId>16c4ef00-bf87-31a1-0000-000000000000</parentGroupId>
+              <position>
+                <x>241.9826693981899</x>
+                <y>262.7230146314297</y>
+              </position>
+              <state>STOPPED</state>
+              <comments></comments>
+              <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+              <name>Input-SentimentProcessed</name>
+              <type>INPUT_PORT</type>
+            </inputPorts>
+            <processors>
+              <id>ced6f784-c62d-3019-0000-000000000000</id>
+              <parentGroupId>16c4ef00-bf87-31a1-0000-000000000000</parentGroupId>
+              <position>
+                <x>239.4094272106899</x>
+                <y>370.21177505383866</y>
+              </position>
+              <state>STOPPED</state>
+              <bundle>
+                <artifact>nifi-standard-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.4.0</version>
+              </bundle>
+              <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                  <entry>
+                    <key>Character Set</key>
+                    <value>
+                      <defaultValue>UTF-8</defaultValue>
+                      <description>The Character Set in which the file is encoded</description>
+                      <displayName>Character Set</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Character Set</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Maximum Buffer Size</key>
+                    <value>
+                      <defaultValue>1 MB</defaultValue>
+                      <description>Specifies the maximum amount of data to buffer (per file) in order to apply the regular expressions.  Files larger than the specified maximum will not be fully evaluated.</description>
+                      <displayName>Maximum Buffer Size</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Maximum Buffer Size</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Maximum Capture Group Length</key>
+                    <value>
+                      <defaultValue>1024</defaultValue>
+                      <description>Specifies the maximum number of characters a given capture group value can have.  Any characters beyond the max will be truncated.</description>
+                      <displayName>Maximum Capture Group Length</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Maximum Capture Group Length</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Enable Canonical Equivalence</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>Indicates that two characters match only when their full canonical decompositions match.</description>
+                      <displayName>Enable Canonical Equivalence</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Enable Canonical Equivalence</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Enable Case-insensitive Matching</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>Indicates that two characters match even if they are in a different case.  Can also be specified via the embedded flag (?i).</description>
+                      <displayName>Enable Case-insensitive Matching</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Enable Case-insensitive Matching</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Permit Whitespace and Comments in Pattern</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>In this mode, whitespace is ignored, and embedded comments starting with # are ignored until the end of a line.  Can also be specified via the embedded flag (?x).</description>
+                      <displayName>Permit Whitespace and Comments in Pattern</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Permit Whitespace and Comments in Pattern</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Enable DOTALL Mode</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>Indicates that the expression '.' should match any character, including a line terminator.  Can also be specified via the embedded flag (?s).</description>
+                      <displayName>Enable DOTALL Mode</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Enable DOTALL Mode</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Enable Literal Parsing of the Pattern</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>Indicates that Metacharacters and escape characters should be given no special meaning.</description>
+                      <displayName>Enable Literal Parsing of the Pattern</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Enable Literal Parsing of the Pattern</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Enable Multiline Mode</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>Indicates that '^' and '$' should match just after and just before a line terminator or end of sequence, instead of only the beginning or end of the entire input.  Can also be specified via the embeded flag (?m).</description>
+                      <displayName>Enable Multiline Mode</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Enable Multiline Mode</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Enable Unicode-aware Case Folding</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>When used with 'Enable Case-insensitive Matching', matches in a manner consistent with the Unicode Standard.  Can also be specified via the embedded flag (?u).</description>
+                      <displayName>Enable Unicode-aware Case Folding</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Enable Unicode-aware Case Folding</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Enable Unicode Predefined Character Classes</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>Specifies conformance with the Unicode Technical Standard #18: Unicode Regular Expression Annex C: Compatibility Properties.  Can also be specified via the embedded flag (?U).</description>
+                      <displayName>Enable Unicode Predefined Character Classes</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Enable Unicode Predefined Character Classes</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Enable Unix Lines Mode</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>Indicates that only the '
+' line terminator is recognized in the behavior of '.', '^', and '$'.  Can also be specified via the embedded flag (?d).</description>
+                      <displayName>Enable Unix Lines Mode</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Enable Unix Lines Mode</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Include Capture Group 0</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>true</defaultValue>
+                      <description>Indicates that Capture Group 0 should be included as an attribute. Capture Group 0 represents the entirety of the regular expression match, is typically not used, and could have considerable length.</description>
+                      <displayName>Include Capture Group 0</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Include Capture Group 0</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>extract-text-enable-repeating-capture-group</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>If set to true, every string matching the capture groups will be extracted. Otherwise, if the Regular Expression matches more than once, only the first match will be extracted.</description>
+                      <displayName>Enable repeating capture group</displayName>
+                      <dynamic>false</dynamic>
+                      <name>extract-text-enable-repeating-capture-group</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Analysis_Result</key>
+                    <value>
+                      <description></description>
+                      <displayName>Analysis_Result</displayName>
+                      <dynamic>true</dynamic>
+                      <name>Analysis_Result</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                  <entry>
+                    <key>Character Set</key>
+                    <value>UTF-8</value>
+                  </entry>
+                  <entry>
+                    <key>Maximum Buffer Size</key>
+                    <value>1 MB</value>
+                  </entry>
+                  <entry>
+                    <key>Maximum Capture Group Length</key>
+                    <value>2048</value>
+                  </entry>
+                  <entry>
+                    <key>Enable Canonical Equivalence</key>
+                    <value>false</value>
+                  </entry>
+                  <entry>
+                    <key>Enable Case-insensitive Matching</key>
+                    <value>false</value>
+                  </entry>
+                  <entry>
+                    <key>Permit Whitespace and Comments in Pattern</key>
+                    <value>false</value>
+                  </entry>
+                  <entry>
+                    <key>Enable DOTALL Mode</key>
+                    <value>false</value>
+                  </entry>
+                  <entry>
+                    <key>Enable Literal Parsing of the Pattern</key>
+                    <value>false</value>
+                  </entry>
+                  <entry>
+                    <key>Enable Multiline Mode</key>
+                    <value>false</value>
+                  </entry>
+                  <entry>
+                    <key>Enable Unicode-aware Case Folding</key>
+                    <value>false</value>
+                  </entry>
+                  <entry>
+                    <key>Enable Unicode Predefined Character Classes</key>
+                    <value>false</value>
+                  </entry>
+                  <entry>
+                    <key>Enable Unix Lines Mode</key>
+                    <value>false</value>
+                  </entry>
+                  <entry>
+                    <key>Include Capture Group 0</key>
+                    <value>true</value>
+                  </entry>
+                  <entry>
+                    <key>extract-text-enable-repeating-capture-group</key>
+                    <value>false</value>
+                  </entry>
+                  <entry>
+                    <key>Analysis_Result</key>
+                    <value>(.+),(.+),(.+)</value>
+                  </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+              </config>
+              <name>6. Extract the analytics result </name>
+              <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>matched</name>
+              </relationships>
+              <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>unmatched</name>
+              </relationships>
+              <style></style>
+              <type>org.apache.nifi.processors.standard.ExtractText</type>
+            </processors>
+            <processors>
+              <id>e8621ca5-8a44-384b-0000-000000000000</id>
+              <parentGroupId>16c4ef00-bf87-31a1-0000-000000000000</parentGroupId>
+              <position>
+                <x>241.89725069701802</x>
+                <y>610.4363055561314</y>
+              </position>
+              <state>STOPPED</state>
+              <bundle>
+                <artifact>nifi-standard-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.4.0</version>
+              </bundle>
+              <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                  <entry>
+                    <key>JDBC Connection Pool</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>TwitterSQLServer</displayName>
+                          <value>1d96d192-103b-3716-46f5-9b28c0f65064</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <description>Specifies the JDBC Connection Pool to use in order to convert the JSON message to a SQL statement. The Connection Pool is necessary in order to determine the appropriate database column types.</description>
+                      <displayName>JDBC Connection Pool</displayName>
+                      <dynamic>false</dynamic>
+                      <identifiesControllerService>org.apache.nifi.dbcp.DBCPService</identifiesControllerService>
+                      <identifiesControllerServiceBundle>
+                        <artifact>nifi-standard-services-api-nar</artifact>
+                        <group>org.apache.nifi</group>
+                        <version>1.4.0</version>
+                      </identifiesControllerServiceBundle>
+                      <name>JDBC Connection Pool</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Support Fragmented Transactions</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>true</defaultValue>
+                      <description>If true, when a FlowFile is consumed by this Processor, the Processor will first check the fragment.identifier and fragment.count attributes of that FlowFile. If the fragment.count value is greater than 1, the Processor will not process any FlowFile with that fragment.identifier until all are available; at that point, it will process all FlowFiles with that fragment.identifier as a single transaction, in the order specified by the FlowFiles' fragment.index attributes. This Provides atomicity of those SQL statements. If this value is false, these attributes will be ignored and the updates will occur independent of one another.</description>
+                      <displayName>Support Fragmented Transactions</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Support Fragmented Transactions</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Transaction Timeout</key>
+                    <value>
+                      <description>If the &lt;Support Fragmented Transactions&gt; property is set to true, specifies how long to wait for all FlowFiles for a particular fragment.identifier attribute to arrive before just transferring all of the FlowFiles with that identifier to the 'failure' relationship</description>
+                      <displayName>Transaction Timeout</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Transaction Timeout</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Batch Size</key>
+                    <value>
+                      <defaultValue>100</defaultValue>
+                      <description>The preferred number of FlowFiles to put to the database in a single transaction</description>
+                      <displayName>Batch Size</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Batch Size</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Obtain Generated Keys</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>If true, any key that is automatically generated by the database will be added to the FlowFile that generated it using the sql.generate.key attribute. This may result in slightly slower performance and is not supported by all databases.</description>
+                      <displayName>Obtain Generated Keys</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Obtain Generated Keys</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>rollback-on-failure</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>Specify how to handle error. By default (false), if an error occurs while processing a FlowFile, the FlowFile will be routed to 'failure' or 'retry' relationship based on error type, and processor can continue with next FlowFile. Instead, you may want to rollback currently processed FlowFiles and stop further processing immediately. In that case, you can do so by enabling this 'Rollback On Failure' property.  If enabled, failed FlowFiles will stay in the input relationship without penalizing it and being processed repeatedly until it gets processed successfully or removed by other means. It is important to set adequate 'Yield Duration' to avoid retrying too frequently.</description>
+                      <displayName>Rollback On Failure</displayName>
+                      <dynamic>false</dynamic>
+                      <name>rollback-on-failure</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                  <entry>
+                    <key>JDBC Connection Pool</key>
+                    <value>efe45c30-842f-3e41-0000-000000000000</value>
+                  </entry>
+                  <entry>
+                    <key>Support Fragmented Transactions</key>
+                    <value>false</value>
+                  </entry>
+                  <entry>
+                    <key>Transaction Timeout</key>
+                  </entry>
+                  <entry>
+                    <key>Batch Size</key>
+                    <value>100</value>
+                  </entry>
+                  <entry>
+                    <key>Obtain Generated Keys</key>
+                    <value>false</value>
+                  </entry>
+                  <entry>
+                    <key>rollback-on-failure</key>
+                    <value>false</value>
+                  </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+              </config>
+              <name>10. Move data into sql</name>
+              <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>failure</name>
+              </relationships>
+              <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>retry</name>
+              </relationships>
+              <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>success</name>
+              </relationships>
+              <style></style>
+              <type>org.apache.nifi.processors.standard.PutSQL</type>
+            </processors>
+            <processors>
+              <id>ef06f7ad-a3a0-3a26-0000-000000000000</id>
+              <parentGroupId>16c4ef00-bf87-31a1-0000-000000000000</parentGroupId>
+              <position>
+                <x>578.1544830292463</x>
+                <y>490.03128505348786</y>
+              </position>
+              <state>STOPPED</state>
+              <bundle>
+                <artifact>nifi-standard-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.4.0</version>
+              </bundle>
+              <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                  <entry>
+                    <key>Attributes List</key>
+                    <value>
+                      <description>Comma separated list of attributes to be included in the resulting JSON. If this value is left empty then all existing Attributes will be included. This list of attributes is case sensitive. If an attribute specified in the list is not found it will be be emitted to the resulting JSON with an empty string or NULL value.</description>
+                      <displayName>Attributes List</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Attributes List</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>attributes-to-json-regex</key>
+                    <value>
+                      <description>Regular expression that will be evaluated against the flow file attributes to select the matching attributes. This property can be used in combination with the attributes list property.</description>
+                      <displayName>Attributes Regular Expression</displayName>
+                      <dynamic>false</dynamic>
+                      <name>attributes-to-json-regex</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>true</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Destination</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>flowfile-attribute</displayName>
+                          <value>flowfile-attribute</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>flowfile-content</displayName>
+                          <value>flowfile-content</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>flowfile-attribute</defaultValue>
+                      <description>Control if JSON value is written as a new flowfile attribute 'JSONAttributes' or written in the flowfile content. Writing to flowfile content will overwrite any existing flowfile content.</description>
+                      <displayName>Destination</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Destination</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Include Core Attributes</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>true</defaultValue>
+                      <description>Determines if the FlowFile org.apache.nifi.flowfile.attributes.CoreAttributes which are contained in every FlowFile should be included in the final JSON value generated.</description>
+                      <displayName>Include Core Attributes</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Include Core Attributes</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Null Value</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>If true a non existing or empty attribute will be NULL in the resulting JSON. If false an empty string will be placed in the JSON</description>
+                      <displayName>Null Value</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Null Value</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                  <entry>
+                    <key>Attributes List</key>
+                    <value>tweetid,userid,username,screenname,tweetedtext,language,location,created_at,hashtag,retweetcount,favouritecount,friendscount,followerscount,sentiment,sentimentscore</value>
+                  </entry>
+                  <entry>
+                    <key>attributes-to-json-regex</key>
+                  </entry>
+                  <entry>
+                    <key>Destination</key>
+                    <value>flowfile-content</value>
+                  </entry>
+                  <entry>
+                    <key>Include Core Attributes</key>
+                    <value>true</value>
+                  </entry>
+                  <entry>
+                    <key>Null Value</key>
+                    <value>false</value>
+                  </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+              </config>
+              <name>AttributesToJSON</name>
+              <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>failure</name>
+              </relationships>
+              <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>success</name>
+              </relationships>
+              <style></style>
+              <type>org.apache.nifi.processors.standard.AttributesToJSON</type>
+            </processors>
+            <processors>
+              <id>f4d6bfb0-9ba4-345e-0000-000000000000</id>
+              <parentGroupId>16c4ef00-bf87-31a1-0000-000000000000</parentGroupId>
+              <position>
+                <x>241.89725069701802</x>
+                <y>490.031315571066</y>
+              </position>
+              <state>STOPPED</state>
+              <bundle>
+                <artifact>nifi-standard-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.4.0</version>
+              </bundle>
+              <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                  <entry>
+                    <key>JDBC Connection Pool</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>TwitterSQLServer</displayName>
+                          <value>1d96d192-103b-3716-46f5-9b28c0f65064</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <description>Specifies the JDBC Connection Pool to use in order to convert the JSON message to a SQL statement. The Connection Pool is necessary in order to determine the appropriate database column types.</description>
+                      <displayName>JDBC Connection Pool</displayName>
+                      <dynamic>false</dynamic>
+                      <identifiesControllerService>org.apache.nifi.dbcp.DBCPService</identifiesControllerService>
+                      <identifiesControllerServiceBundle>
+                        <artifact>nifi-standard-services-api-nar</artifact>
+                        <group>org.apache.nifi</group>
+                        <version>1.4.0</version>
+                      </identifiesControllerServiceBundle>
+                      <name>JDBC Connection Pool</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Statement Type</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>UPDATE</displayName>
+                          <value>UPDATE</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>INSERT</displayName>
+                          <value>INSERT</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>DELETE</displayName>
+                          <value>DELETE</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <description>Specifies the type of SQL Statement to generate</description>
+                      <displayName>Statement Type</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Statement Type</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Table Name</key>
+                    <value>
+                      <description>The name of the table that the statement should update</description>
+                      <displayName>Table Name</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Table Name</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>true</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Catalog Name</key>
+                    <value>
+                      <description>The name of the catalog that the statement should update. This may not apply for the database that you are updating. In this case, leave the field empty</description>
+                      <displayName>Catalog Name</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Catalog Name</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>true</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Schema Name</key>
+                    <value>
+                      <description>The name of the schema that the table belongs to. This may not apply for the database that you are updating. In this case, leave the field empty</description>
+                      <displayName>Schema Name</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Schema Name</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>true</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Translate Field Names</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>true</defaultValue>
+                      <description>If true, the Processor will attempt to translate JSON field names into the appropriate column names for the table specified. If false, the JSON field names must match the column names exactly, or the column will not be updated</description>
+                      <displayName>Translate Field Names</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Translate Field Names</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Unmatched Field Behavior</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <description>Any field in the JSON document that cannot be mapped to a column in the database is ignored</description>
+                          <displayName>Ignore Unmatched Fields</displayName>
+                          <value>Ignore Unmatched Fields</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <description>If the JSON document has any field that cannot be mapped to a column in the database, the FlowFile will be routed to the failure relationship</description>
+                          <displayName>Fail</displayName>
+                          <value>Fail</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>Ignore Unmatched Fields</defaultValue>
+                      <description>If an incoming JSON element has a field that does not map to any of the database table's columns, this property specifies how to handle the situation</description>
+                      <displayName>Unmatched Field Behavior</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Unmatched Field Behavior</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Unmatched Column Behavior</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <description>Any column in the database that does not have a field in the JSON document will be assumed to not be required.  No notification will be logged</description>
+                          <displayName>Ignore Unmatched Columns</displayName>
+                          <value>Ignore Unmatched Columns</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <description>Any column in the database that does not have a field in the JSON document will be assumed to not be required.  A warning will be logged</description>
+                          <displayName>Warn on Unmatched Columns</displayName>
+                          <value>Warn on Unmatched Columns</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <description>A flow will fail if any column in the database that does not have a field in the JSON document.  An error will be logged</description>
+                          <displayName>Fail on Unmatched Columns</displayName>
+                          <value>Fail on Unmatched Columns</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>Fail on Unmatched Columns</defaultValue>
+                      <description>If an incoming JSON element does not have a field mapping for all of the database table's columns, this property specifies how to handle the situation</description>
+                      <displayName>Unmatched Column Behavior</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Unmatched Column Behavior</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Update Keys</key>
+                    <value>
+                      <description>A comma-separated list of column names that uniquely identifies a row in the database for UPDATE statements. If the Statement Type is UPDATE and this property is not set, the table's Primary Keys are used. In this case, if no Primary Key exists, the conversion to SQL will fail if Unmatched Column Behaviour is set to FAIL. This property is ignored if the Statement Type is INSERT</description>
+                      <displayName>Update Keys</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Update Keys</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>true</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>jts-quoted-identifiers</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>Enabling this option will cause all column names to be quoted, allowing you to use reserved words as column names in your tables.</description>
+                      <displayName>Quote Column Identifiers</displayName>
+                      <dynamic>false</dynamic>
+                      <name>jts-quoted-identifiers</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>jts-quoted-table-identifiers</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>true</displayName>
+                          <value>true</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>false</displayName>
+                          <value>false</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>false</defaultValue>
+                      <description>Enabling this option will cause the table name to be quoted to support the use of special characters in the table name</description>
+                      <displayName>Quote Table Identifiers</displayName>
+                      <dynamic>false</dynamic>
+                      <name>jts-quoted-table-identifiers</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                  <entry>
+                    <key>JDBC Connection Pool</key>
+                    <value>efe45c30-842f-3e41-0000-000000000000</value>
+                  </entry>
+                  <entry>
+                    <key>Statement Type</key>
+                    <value>INSERT</value>
+                  </entry>
+                  <entry>
+                    <key>Table Name</key>
+                    <value>tweetssentiment</value>
+                  </entry>
+                  <entry>
+                    <key>Catalog Name</key>
+                  </entry>
+                  <entry>
+                    <key>Schema Name</key>
+                  </entry>
+                  <entry>
+                    <key>Translate Field Names</key>
+                    <value>true</value>
+                  </entry>
+                  <entry>
+                    <key>Unmatched Field Behavior</key>
+                    <value>Ignore Unmatched Fields</value>
+                  </entry>
+                  <entry>
+                    <key>Unmatched Column Behavior</key>
+                    <value>Warn on Unmatched Columns</value>
+                  </entry>
+                  <entry>
+                    <key>Update Keys</key>
+                  </entry>
+                  <entry>
+                    <key>jts-quoted-identifiers</key>
+                    <value>false</value>
+                  </entry>
+                  <entry>
+                    <key>jts-quoted-table-identifiers</key>
+                    <value>false</value>
+                  </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+              </config>
+              <name>9. Converts json data into SQL.</name>
+              <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>failure</name>
+              </relationships>
+              <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>original</name>
+              </relationships>
+              <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>sql</name>
+              </relationships>
+              <style></style>
+              <type>org.apache.nifi.processors.standard.ConvertJSONToSQL</type>
+            </processors>
+            <processors>
+              <id>398a152c-bbfe-323c-0000-000000000000</id>
+              <parentGroupId>16c4ef00-bf87-31a1-0000-000000000000</parentGroupId>
+              <position>
+                <x>572.6990155063329</x>
+                <y>371.45567153821366</y>
+              </position>
+              <state>STOPPED</state>
+              <bundle>
+                <artifact>nifi-update-attribute-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.4.0</version>
+              </bundle>
+              <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                  <entry>
+                    <key>Delete Attributes Expression</key>
+                    <value>
+                      <description>Regular expression for attributes to be deleted from FlowFiles.  Existing attributes that match will be deleted regardless of whether they are updated by this processor.</description>
+                      <displayName>Delete Attributes Expression</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Delete Attributes Expression</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>true</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Store State</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>Do not store state</displayName>
+                          <value>Do not store state</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>Store state locally</displayName>
+                          <value>Store state locally</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>Do not store state</defaultValue>
+                      <description>Select whether or not state will be stored. Selecting 'Stateless' will offer the default functionality of purely updating the attributes on a FlowFile in a stateless manner. Selecting a stateful option will not only store the attributes on the FlowFile but also in the Processors state. See the 'Stateful Usage' topic of the 'Additional Details' section of this processor's documentation for more information</description>
+                      <displayName>Store State</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Store State</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Stateful Variables Initial Value</key>
+                    <value>
+                      <description>If using state to set/reference variables then this value is used to set the initial value of the stateful variable. This will only be used in the @OnScheduled method when state does not contain a value for the variable. This is required if running statefully but can be empty if needed.</description>
+                      <displayName>Stateful Variables Initial Value</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Stateful Variables Initial Value</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>sentiment</key>
+                    <value>
+                      <description></description>
+                      <displayName>sentiment</displayName>
+                      <dynamic>true</dynamic>
+                      <name>sentiment</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>true</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>sentimentscore</key>
+                    <value>
+                      <description></description>
+                      <displayName>sentimentscore</displayName>
+                      <dynamic>true</dynamic>
+                      <name>sentimentscore</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>true</supportsEl>
+                    </value>
+                  </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                  <entry>
+                    <key>Delete Attributes Expression</key>
+                  </entry>
+                  <entry>
+                    <key>Store State</key>
+                    <value>Do not store state</value>
+                  </entry>
+                  <entry>
+                    <key>Stateful Variables Initial Value</key>
+                  </entry>
+                  <entry>
+                    <key>sentiment</key>
+                    <value>${Analysis_Result.3:trim()}</value>
+                  </entry>
+                  <entry>
+                    <key>sentimentscore</key>
+                    <value>${Analysis_Result.2:trim()}</value>
+                  </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+              </config>
+              <name>7. Stores the result into attribute</name>
+              <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>success</name>
+              </relationships>
+              <style></style>
+              <type>org.apache.nifi.processors.attributes.UpdateAttribute</type>
+            </processors>
+          </contents>
+          <name>Move predicted output to SQL Server</name>
+        </processGroups>
+        <processGroups>
+          <id>326278fa-845b-3619-0000-000000000000</id>
+          <parentGroupId>12e7d8f2-4ad0-33d2-0000-000000000000</parentGroupId>
+          <position>
+            <x>-522.6957975059571</x>
+            <y>129.42102537839247</y>
+          </position>
+          <comments></comments>
+          <contents>
+            <connections>
+              <id>c2f26c50-da05-376d-0000-000000000000</id>
+              <parentGroupId>326278fa-845b-3619-0000-000000000000</parentGroupId>
+              <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+              <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+              <destination>
+                <groupId>326278fa-845b-3619-0000-000000000000</groupId>
+                <id>6f47c2f1-3955-332c-0000-000000000000</id>
+                <type>PROCESSOR</type>
+              </destination>
+              <flowFileExpiration>0 sec</flowFileExpiration>
+              <labelIndex>1</labelIndex>
+              <name></name>
+              <selectedRelationships>matched</selectedRelationships>
+              <source>
+                <groupId>326278fa-845b-3619-0000-000000000000</groupId>
+                <id>b7d8a61f-bbbd-39a7-0000-000000000000</id>
+                <type>PROCESSOR</type>
+              </source>
+              <zIndex>0</zIndex>
+            </connections>
+            <connections>
+              <id>3e9cb3a1-f933-397c-0000-000000000000</id>
+              <parentGroupId>326278fa-845b-3619-0000-000000000000</parentGroupId>
+              <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+              <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+              <destination>
+                <groupId>326278fa-845b-3619-0000-000000000000</groupId>
+                <id>f8edb58f-3f8b-31a8-0000-000000000000</id>
+                <type>OUTPUT_PORT</type>
+              </destination>
+              <flowFileExpiration>0 sec</flowFileExpiration>
+              <labelIndex>1</labelIndex>
+              <name></name>
+              <selectedRelationships>success</selectedRelationships>
+              <source>
+                <groupId>326278fa-845b-3619-0000-000000000000</groupId>
+                <id>6f47c2f1-3955-332c-0000-000000000000</id>
+                <type>PROCESSOR</type>
+              </source>
+              <zIndex>0</zIndex>
+            </connections>
+            <connections>
+              <id>4e8e588b-9676-3992-0000-000000000000</id>
+              <parentGroupId>326278fa-845b-3619-0000-000000000000</parentGroupId>
+              <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+              <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+              <destination>
+                <groupId>326278fa-845b-3619-0000-000000000000</groupId>
+                <id>b7d8a61f-bbbd-39a7-0000-000000000000</id>
+                <type>PROCESSOR</type>
+              </destination>
+              <flowFileExpiration>0 sec</flowFileExpiration>
+              <labelIndex>1</labelIndex>
+              <name></name>
+              <source>
+                <groupId>326278fa-845b-3619-0000-000000000000</groupId>
+                <id>fd0e9d3b-ed4e-3c53-0000-000000000000</id>
+                <type>INPUT_PORT</type>
+              </source>
+              <zIndex>0</zIndex>
+            </connections>
+            <inputPorts>
+              <id>fd0e9d3b-ed4e-3c53-0000-000000000000</id>
+              <parentGroupId>326278fa-845b-3619-0000-000000000000</parentGroupId>
+              <position>
+                <x>49.35536521770928</x>
+                <y>-15.390975709932832</y>
+              </position>
+              <state>STOPPED</state>
+              <comments></comments>
+              <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+              <name>Input - Tweets</name>
+              <type>INPUT_PORT</type>
+            </inputPorts>
+            <outputPorts>
+              <id>f8edb58f-3f8b-31a8-0000-000000000000</id>
+              <parentGroupId>326278fa-845b-3619-0000-000000000000</parentGroupId>
+              <position>
+                <x>48.35536521770928</x>
+                <y>102.6090114154639</y>
+              </position>
+              <state>STOPPED</state>
+              <comments></comments>
+              <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+              <name>Output-CleanedData</name>
+              <type>OUTPUT_PORT</type>
+            </outputPorts>
+            <processors>
+              <id>b7d8a61f-bbbd-39a7-0000-000000000000</id>
+              <parentGroupId>326278fa-845b-3619-0000-000000000000</parentGroupId>
+              <position>
+                <x>338.9633831102219</x>
+                <y>-17.797594812082252</y>
+              </position>
+              <state>STOPPED</state>
+              <bundle>
+                <artifact>nifi-standard-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.4.0</version>
+              </bundle>
+              <config>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                  <entry>
+                    <key>Destination</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>flowfile-content</displayName>
+                          <value>flowfile-content</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>flowfile-attribute</displayName>
+                          <value>flowfile-attribute</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>flowfile-content</defaultValue>
+                      <description>Indicates whether the results of the JsonPath evaluation are written to the FlowFile content or a FlowFile attribute; if using attribute, must specify the Attribute Name property. If set to flowfile-content, only one JsonPath may be specified, and the property name is ignored.</description>
+                      <displayName>Destination</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Destination</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Return Type</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>auto-detect</displayName>
+                          <value>auto-detect</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>json</displayName>
+                          <value>json</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>scalar</displayName>
+                          <value>scalar</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>auto-detect</defaultValue>
+                      <description>Indicates the desired return type of the JSON Path expressions.  Selecting 'auto-detect' will set the return type to 'json' for a Destination of 'flowfile-content', and 'scalar' for a Destination of 'flowfile-attribute'.</description>
+                      <displayName>Return Type</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Return Type</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Path Not Found Behavior</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>warn</displayName>
+                          <value>warn</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>ignore</displayName>
+                          <value>ignore</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>ignore</defaultValue>
+                      <description>Indicates how to handle missing JSON path expressions when destination is set to 'flowfile-attribute'. Selecting 'warn' will generate a warning when a JSON path expression is not found.</description>
+                      <displayName>Path Not Found Behavior</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Path Not Found Behavior</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Null Value Representation</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>empty string</displayName>
+                          <value>empty string</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>the string 'null'</displayName>
+                          <value>the string 'null'</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>empty string</defaultValue>
+                      <description>Indicates the desired representation of JSON Path expressions resulting in a null value.</description>
+                      <displayName>Null Value Representation</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Null Value Representation</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>createddate</key>
+                    <value>
+                      <description></description>
+                      <displayName>createddate</displayName>
+                      <dynamic>true</dynamic>
+                      <name>createddate</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>exttxt</key>
+                    <value>
+                      <description></description>
+                      <displayName>exttxt</displayName>
+                      <dynamic>true</dynamic>
+                      <name>exttxt</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>exttxtRetweet</key>
+                    <value>
+                      <description></description>
+                      <displayName>exttxtRetweet</displayName>
+                      <dynamic>true</dynamic>
+                      <name>exttxtRetweet</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>favouritecount</key>
+                    <value>
+                      <description></description>
+                      <displayName>favouritecount</displayName>
+                      <dynamic>true</dynamic>
+                      <name>favouritecount</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>followerscount</key>
+                    <value>
+                      <description></description>
+                      <displayName>followerscount</displayName>
+                      <dynamic>true</dynamic>
+                      <name>followerscount</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>friendscount</key>
+                    <value>
+                      <description></description>
+                      <displayName>friendscount</displayName>
+                      <dynamic>true</dynamic>
+                      <name>friendscount</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>language</key>
+                    <value>
+                      <description></description>
+                      <displayName>language</displayName>
+                      <dynamic>true</dynamic>
+                      <name>language</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>location</key>
+                    <value>
+                      <description></description>
+                      <displayName>location</displayName>
+                      <dynamic>true</dynamic>
+                      <name>location</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>retweetcount</key>
+                    <value>
+                      <description></description>
+                      <displayName>retweetcount</displayName>
+                      <dynamic>true</dynamic>
+                      <name>retweetcount</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>retweeted</key>
+                    <value>
+                      <description></description>
+                      <displayName>retweeted</displayName>
+                      <dynamic>true</dynamic>
+                      <name>retweeted</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>screenname</key>
+                    <value>
+                      <description></description>
+                      <displayName>screenname</displayName>
+                      <dynamic>true</dynamic>
+                      <name>screenname</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>tweetedtext</key>
+                    <value>
+                      <description></description>
+                      <displayName>tweetedtext</displayName>
+                      <dynamic>true</dynamic>
+                      <name>tweetedtext</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>tweetid</key>
+                    <value>
+                      <description></description>
+                      <displayName>tweetid</displayName>
+                      <dynamic>true</dynamic>
+                      <name>tweetid</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>userid</key>
+                    <value>
+                      <description></description>
+                      <displayName>userid</displayName>
+                      <dynamic>true</dynamic>
+                      <name>userid</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>username</key>
+                    <value>
+                      <description></description>
+                      <displayName>username</displayName>
+                      <dynamic>true</dynamic>
+                      <name>username</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                  <entry>
+                    <key>Destination</key>
+                    <value>flowfile-attribute</value>
+                  </entry>
+                  <entry>
+                    <key>Return Type</key>
+                    <value>json</value>
+                  </entry>
+                  <entry>
+                    <key>Path Not Found Behavior</key>
+                    <value>ignore</value>
+                  </entry>
+                  <entry>
+                    <key>Null Value Representation</key>
+                    <value>empty string</value>
+                  </entry>
+                  <entry>
+                    <key>createddate</key>
+                    <value>$.created_at</value>
+                  </entry>
+                  <entry>
+                    <key>exttxt</key>
+                    <value>$.extended_tweet.full_text</value>
+                  </entry>
+                  <entry>
+                    <key>exttxtRetweet</key>
+                    <value>$.retweeted_status.extended_tweet.full_text</value>
+                  </entry>
+                  <entry>
+                    <key>favouritecount</key>
+                    <value>$.favorite_count</value>
+                  </entry>
+                  <entry>
+                    <key>followerscount</key>
+                    <value>$.user.followers_count</value>
+                  </entry>
+                  <entry>
+                    <key>friendscount</key>
+                    <value>$.user.friends_count</value>
+                  </entry>
+                  <entry>
+                    <key>language</key>
+                    <value>$.lang</value>
+                  </entry>
+                  <entry>
+                    <key>location</key>
+                    <value>$.user.location</value>
+                  </entry>
+                  <entry>
+                    <key>retweetcount</key>
+                    <value>$.retweet_count</value>
+                  </entry>
+                  <entry>
+                    <key>retweeted</key>
+                    <value>$.retweeted</value>
+                  </entry>
+                  <entry>
+                    <key>screenname</key>
+                    <value>$.user.screen_name</value>
+                  </entry>
+                  <entry>
+                    <key>tweetedtext</key>
+                    <value>$.text</value>
+                  </entry>
+                  <entry>
+                    <key>tweetid</key>
+                    <value>$.id</value>
+                  </entry>
+                  <entry>
+                    <key>userid</key>
+                    <value>$.user.id</value>
+                  </entry>
+                  <entry>
+                    <key>username</key>
+                    <value>$.user.name</value>
+                  </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+              </config>
+              <name>Parse JSON data.</name>
+              <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>failure</name>
+              </relationships>
+              <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>matched</name>
+              </relationships>
+              <relationships>
+                <autoTerminate>true</autoTerminate>
+                <name>unmatched</name>
+              </relationships>
+              <style>
+                <entry>
+                  <key>background-color</key>
+                  <value>#f0e7ee</value>
+                </entry>
+              </style>
+              <type>org.apache.nifi.processors.standard.EvaluateJsonPath</type>
+            </processors>
+            <processors>
+              <id>6f47c2f1-3955-332c-0000-000000000000</id>
+              <parentGroupId>326278fa-845b-3619-0000-000000000000</parentGroupId>
+              <position>
+                <x>339.4630989354948</x>
+                <y>105.31899226305222</y>
+              </position>
+              <state>STOPPED</state>
+              <bundle>
+                <artifact>nifi-update-attribute-nar</artifact>
+                <group>org.apache.nifi</group>
+                <version>1.4.0</version>
+              </bundle>
+              <config>
+                <annotationData>&lt;criteria&gt;
+    &lt;flowFilePolicy&gt;USE_ORIGINAL&lt;/flowFilePolicy&gt;
+    &lt;rules&gt;
+        &lt;actions&gt;
+            &lt;attribute&gt;tweetedtext&lt;/attribute&gt;
+            &lt;id&gt;9afaeb10-1739-4375-97b1-66e20d0e004a&lt;/id&gt;
+            &lt;value&gt;${exttext}&lt;/value&gt;
+        &lt;/actions&gt;
+        &lt;conditions&gt;
+            &lt;expression&gt;${exttxt:isEmpty():not()}&lt;/expression&gt;
+            &lt;id&gt;2c53835e-0759-4589-a9d5-b9051e15f18f&lt;/id&gt;
+        &lt;/conditions&gt;
+        &lt;id&gt;8b213adb-1a95-4752-8bde-c489d4430edf&lt;/id&gt;
+        &lt;name&gt;ExtendedTweetTextUpdate&lt;/name&gt;
+    &lt;/rules&gt;
+    &lt;rules&gt;
+        &lt;actions&gt;
+            &lt;attribute&gt;tweetedtext&lt;/attribute&gt;
+            &lt;id&gt;9f036f13-e115-41fe-a5c2-b913b2f05766&lt;/id&gt;
+            &lt;value&gt;${exttxtRetweet}&lt;/value&gt;
+        &lt;/actions&gt;
+        &lt;conditions&gt;
+            &lt;expression&gt;${exttxtRetweet:isEmpty():not()}&lt;/expression&gt;
+            &lt;id&gt;4604cace-e359-4e8a-8757-7e07bc550f7e&lt;/id&gt;
+        &lt;/conditions&gt;
+        &lt;id&gt;79cca521-2290-4f08-8dbf-77f9b13f6f28&lt;/id&gt;
+        &lt;name&gt;ExtendedReTweetTextUpdate&lt;/name&gt;
+    &lt;/rules&gt;
+    &lt;rules&gt;
+        &lt;actions&gt;
+            &lt;attribute&gt;tweetedtext&lt;/attribute&gt;
+            &lt;id&gt;21d8619e-4dbf-413c-91e1-e08d45110629&lt;/id&gt;
+            &lt;value&gt;${retweettext}&lt;/value&gt;
+        &lt;/actions&gt;
+        &lt;conditions&gt;
+            &lt;expression&gt;${exttxtRetweet:isEmpty():and(${retweet:isEmpty():not()})}&lt;/expression&gt;
+            &lt;id&gt;acbd81e4-b42b-4ec2-b4ef-16b81a197596&lt;/id&gt;
+        &lt;/conditions&gt;
+        &lt;id&gt;0357a99e-1b65-4351-b2c4-457a3999f731&lt;/id&gt;
+        &lt;name&gt;ReTweetTextUpdate&lt;/name&gt;
+    &lt;/rules&gt;
+    &lt;rules&gt;
+        &lt;actions&gt;
+            &lt;attribute&gt;hashtag&lt;/attribute&gt;
+            &lt;id&gt;3210f6aa-79ac-4af4-885c-a77f3d5c5b4a&lt;/id&gt;
+            &lt;value&gt;Syncfusion&lt;/value&gt;
+        &lt;/actions&gt;
+        &lt;conditions&gt;
+            &lt;expression&gt;${tweetedtext:toLower():contains('syncfusion')}&lt;/expression&gt;
+            &lt;id&gt;48d15482-619e-4ef4-8564-9d4f589803f3&lt;/id&gt;
+        &lt;/conditions&gt;
+        &lt;id&gt;d32ad972-44fd-4f0d-8024-a757ac6aba1f&lt;/id&gt;
+        &lt;name&gt;updateSyncfusionHashtag&lt;/name&gt;
+    &lt;/rules&gt;
+    &lt;rules&gt;
+        &lt;actions&gt;
+            &lt;attribute&gt;hashtag&lt;/attribute&gt;
+            &lt;id&gt;ebd8ed9b-8894-4e53-89f8-1f32d46a9053&lt;/id&gt;
+            &lt;value&gt;Dashboard&lt;/value&gt;
+        &lt;/actions&gt;
+        &lt;conditions&gt;
+            &lt;expression&gt;${tweetedtext:toLower():contains('dashboard')}&lt;/expression&gt;
+            &lt;id&gt;4eff13df-1853-4bc8-9a8f-7842dd7788d2&lt;/id&gt;
+        &lt;/conditions&gt;
+        &lt;id&gt;1ad4c41d-5b0e-45b4-8eff-0169cbebdd7e&lt;/id&gt;
+        &lt;name&gt;updateDashboardHashtag&lt;/name&gt;
+    &lt;/rules&gt;
+&lt;/criteria&gt;</annotationData>
+                <bulletinLevel>WARN</bulletinLevel>
+                <comments></comments>
+                <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+                <descriptors>
+                  <entry>
+                    <key>Delete Attributes Expression</key>
+                    <value>
+                      <description>Regular expression for attributes to be deleted from FlowFiles.  Existing attributes that match will be deleted regardless of whether they are updated by this processor.</description>
+                      <displayName>Delete Attributes Expression</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Delete Attributes Expression</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>true</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Store State</key>
+                    <value>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>Do not store state</displayName>
+                          <value>Do not store state</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <allowableValues>
+                        <allowableValue>
+                          <displayName>Store state locally</displayName>
+                          <value>Store state locally</value>
+                        </allowableValue>
+                        <canRead>true</canRead>
+                      </allowableValues>
+                      <defaultValue>Do not store state</defaultValue>
+                      <description>Select whether or not state will be stored. Selecting 'Stateless' will offer the default functionality of purely updating the attributes on a FlowFile in a stateless manner. Selecting a stateful option will not only store the attributes on the FlowFile but also in the Processors state. See the 'Stateful Usage' topic of the 'Additional Details' section of this processor's documentation for more information</description>
+                      <displayName>Store State</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Store State</name>
+                      <required>true</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>Stateful Variables Initial Value</key>
+                    <value>
+                      <description>If using state to set/reference variables then this value is used to set the initial value of the stateful variable. This will only be used in the @OnScheduled method when state does not contain a value for the variable. This is required if running statefully but can be empty if needed.</description>
+                      <displayName>Stateful Variables Initial Value</displayName>
+                      <dynamic>false</dynamic>
+                      <name>Stateful Variables Initial Value</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>false</supportsEl>
+                    </value>
+                  </entry>
+                  <entry>
+                    <key>created_at</key>
+                    <value>
+                      <description></description>
+                      <displayName>created_at</displayName>
+                      <dynamic>true</dynamic>
+                      <name>created_at</name>
+                      <required>false</required>
+                      <sensitive>false</sensitive>
+                      <supportsEl>true</supportsEl>
+                    </value>
+                  </entry>
+                </descriptors>
+                <executionNode>ALL</executionNode>
+                <lossTolerant>false</lossTolerant>
+                <penaltyDuration>30 sec</penaltyDuration>
+                <properties>
+                  <entry>
+                    <key>Delete Attributes Expression</key>
+                  </entry>
+                  <entry>
+                    <key>Store State</key>
+                    <value>Do not store state</value>
+                  </entry>
+                  <entry>
+                    <key>Stateful Variables Initial Value</key>
+                  </entry>
+                  <entry>
+                    <key>created_at</key>
+                    <value>${createddate:trim():getDelimitedField(2,' ')} ${createddate:trim():getDelimitedField(3,' ')} ${createddate:trim():getDelimitedField(6,' ')} ${createddate:trim():getDelimitedField(4,' ')}</value>
+                  </entry>
+                </properties>
+                <runDurationMillis>0</runDurationMillis>
+                <schedulingPeriod>0 sec</schedulingPeriod>
+                <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+                <yieldDuration>1 sec</yieldDuration>
+              </config>
+              <name>Clean the data by updating / extracting fields</name>
+              <relationships>
+                <autoTerminate>false</autoTerminate>
+                <name>success</name>
+              </relationships>
+              <style></style>
+              <type>org.apache.nifi.processors.attributes.UpdateAttribute</type>
+            </processors>
+          </contents>
+          <name>Clean and prepare Twitter data</name>
+        </processGroups>
+        <processors>
+          <id>9ec697c9-368f-32a5-0000-000000000000</id>
+          <parentGroupId>12e7d8f2-4ad0-33d2-0000-000000000000</parentGroupId>
+          <position>
+            <x>-505.19578224716804</x>
+            <y>18.92102537839247</y>
+          </position>
+          <state>STOPPED</state>
+          <bundle>
+            <artifact>nifi-social-media-nar</artifact>
+            <group>org.apache.nifi</group>
+            <version>1.4.0</version>
+          </bundle>
+          <config>
+            <bulletinLevel>WARN</bulletinLevel>
+            <comments></comments>
+            <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+            <descriptors>
+              <entry>
+                <key>Twitter Endpoint</key>
+                <value>
+                  <allowableValues>
+                    <allowableValue>
+                      <description>The endpoint that provides public data, aka a 'garden hose'</description>
+                      <displayName>Sample Endpoint</displayName>
+                      <value>Sample Endpoint</value>
+                    </allowableValue>
+                    <canRead>true</canRead>
+                  </allowableValues>
+                  <allowableValues>
+                    <allowableValue>
+                      <description>The endpoint that provides access to all tweets</description>
+                      <displayName>Firehose Endpoint</displayName>
+                      <value>Firehose Endpoint</value>
+                    </allowableValue>
+                    <canRead>true</canRead>
+                  </allowableValues>
+                  <allowableValues>
+                    <allowableValue>
+                      <description>Endpoint that allows the stream to be filtered by specific terms or User IDs</description>
+                      <displayName>Filter Endpoint</displayName>
+                      <value>Filter Endpoint</value>
+                    </allowableValue>
+                    <canRead>true</canRead>
+                  </allowableValues>
+                  <defaultValue>Sample Endpoint</defaultValue>
+                  <description>Specifies which endpoint data should be pulled from</description>
+                  <displayName>Twitter Endpoint</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Twitter Endpoint</name>
+                  <required>true</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>false</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>Consumer Key</key>
+                <value>
+                  <description>The Consumer Key provided by Twitter</description>
+                  <displayName>Consumer Key</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Consumer Key</name>
+                  <required>true</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>false</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>Consumer Secret</key>
+                <value>
+                  <description>The Consumer Secret provided by Twitter</description>
+                  <displayName>Consumer Secret</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Consumer Secret</name>
+                  <required>true</required>
+                  <sensitive>true</sensitive>
+                  <supportsEl>false</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>Access Token</key>
+                <value>
+                  <description>The Access Token provided by Twitter</description>
+                  <displayName>Access Token</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Access Token</name>
+                  <required>true</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>false</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>Access Token Secret</key>
+                <value>
+                  <description>The Access Token Secret provided by Twitter</description>
+                  <displayName>Access Token Secret</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Access Token Secret</name>
+                  <required>true</required>
+                  <sensitive>true</sensitive>
+                  <supportsEl>false</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>Languages</key>
+                <value>
+                  <description>A comma-separated list of languages for which tweets should be fetched</description>
+                  <displayName>Languages</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Languages</name>
+                  <required>false</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>false</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>Terms to Filter On</key>
+                <value>
+                  <description>A comma-separated list of terms to filter on. Ignored unless Endpoint is set to 'Filter Endpoint'. The filter works such that if any term matches, the status update will be retrieved; multiple terms separated by a space function as an 'AND'. I.e., 'it was, hello' will retrieve status updates that have either 'hello' or both 'it' AND 'was'</description>
+                  <displayName>Terms to Filter On</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Terms to Filter On</name>
+                  <required>false</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>false</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>IDs to Follow</key>
+                <value>
+                  <description>A comma-separated list of Twitter User ID's to follow. Ignored unless Endpoint is set to 'Filter Endpoint'.</description>
+                  <displayName>IDs to Follow</displayName>
+                  <dynamic>false</dynamic>
+                  <name>IDs to Follow</name>
+                  <required>false</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>false</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>Locations to Filter On</key>
+                <value>
+                  <description>A comma-separated list of coordinates specifying one or more bounding boxes to filter on.Each bounding box is specified by a pair of coordinates in the format: swLon,swLat,neLon,neLat. Multiple bounding boxes can be specified as such: swLon1,swLat1,neLon1,neLat1,swLon2,swLat2,neLon2,neLat2.Ignored unless Endpoint is set to 'Filter Endpoint'.</description>
+                  <displayName>Locations to Filter On</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Locations to Filter On</name>
+                  <required>false</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>false</supportsEl>
+                </value>
+              </entry>
+            </descriptors>
+            <executionNode>ALL</executionNode>
+            <lossTolerant>false</lossTolerant>
+            <penaltyDuration>30 sec</penaltyDuration>
+            <properties>
+              <entry>
+                <key>Twitter Endpoint</key>
+                <value>Filter Endpoint</value>
+              </entry>
+              <entry>
+                <key>Consumer Key</key>
+                <value>Enter consumer key</value>
+              </entry>
+              <entry>
+                <key>Consumer Secret</key>
+                <value>ed9e08f6fdbfe0748543e110396c91d16e6b36f361059e627628da3ea215816a</value>
+              </entry>
+              <entry>
+                <key>Access Token</key>
+                <value>Enter access token</value>
+              </entry>
+              <entry>
+                <key>Access Token Secret</key>
+                <value>ddb445d2d419bfb057fbda1ebaa778e1178074e37aa2924d96a370a7e192490d3eaf36ac9a6181539cd698d0d96fd414</value>
+              </entry>
+              <entry>
+                <key>Languages</key>
+                <value>en</value>
+              </entry>
+              <entry>
+                <key>Terms to Filter On</key>
+                <value>IPL2019,RCB,SRH,CSK,KKR</value>
+              </entry>
+              <entry>
+                <key>IDs to Follow</key>
+              </entry>
+              <entry>
+                <key>Locations to Filter On</key>
+              </entry>
+            </properties>
+            <runDurationMillis>0</runDurationMillis>
+            <schedulingPeriod>0 sec</schedulingPeriod>
+            <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+            <yieldDuration>1 sec</yieldDuration>
+          </config>
+          <name>Get data from twitter</name>
+          <relationships>
+            <autoTerminate>false</autoTerminate>
+            <name>success</name>
+          </relationships>
+          <style></style>
+          <type>org.apache.nifi.processors.twitter.GetTwitter</type>
+        </processors>
+        <processors>
+          <id>11e8c1a5-8a13-32d4-0000-000000000000</id>
+          <parentGroupId>12e7d8f2-4ad0-33d2-0000-000000000000</parentGroupId>
+          <position>
+            <x>-501.19578224716804</x>
+            <y>249.92102537839247</y>
+          </position>
+          <state>STOPPED</state>
+          <bundle>
+            <artifact>nifi-standard-nar</artifact>
+            <group>org.apache.nifi</group>
+            <version>1.4.0</version>
+          </bundle>
+          <config>
+            <bulletinLevel>WARN</bulletinLevel>
+            <comments></comments>
+            <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
+            <descriptors>
+              <entry>
+                <key>Command Arguments</key>
+                <value>
+                  <description>The arguments to supply to the executable delimited by the ';' character.</description>
+                  <displayName>Command Arguments</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Command Arguments</name>
+                  <required>false</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>true</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>Command Path</key>
+                <value>
+                  <description>Specifies the command to be executed; if just the name of an executable is provided, it must be in the user's environment PATH.</description>
+                  <displayName>Command Path</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Command Path</name>
+                  <required>true</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>true</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>Ignore STDIN</key>
+                <value>
+                  <allowableValues>
+                    <allowableValue>
+                      <displayName>true</displayName>
+                      <value>true</value>
+                    </allowableValue>
+                    <canRead>true</canRead>
+                  </allowableValues>
+                  <allowableValues>
+                    <allowableValue>
+                      <displayName>false</displayName>
+                      <value>false</value>
+                    </allowableValue>
+                    <canRead>true</canRead>
+                  </allowableValues>
+                  <defaultValue>false</defaultValue>
+                  <description>If true, the contents of the incoming flowfile will not be passed to the executing command</description>
+                  <displayName>Ignore STDIN</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Ignore STDIN</name>
+                  <required>false</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>false</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>Working Directory</key>
+                <value>
+                  <description>The directory to use as the current working directory when executing the command</description>
+                  <displayName>Working Directory</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Working Directory</name>
+                  <required>false</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>true</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>Argument Delimiter</key>
+                <value>
+                  <defaultValue>;</defaultValue>
+                  <description>Delimiter to use to separate arguments for a command [default: ;]. Must be a single character</description>
+                  <displayName>Argument Delimiter</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Argument Delimiter</name>
+                  <required>true</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>false</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>Output Destination Attribute</key>
+                <value>
+                  <description>If set, the output of the stream command will be put into an attribute of the original FlowFile instead of a separate FlowFile. There will no longer be a relationship for 'output stream'. The value of this property will be the key for the output attribute.</description>
+                  <displayName>Output Destination Attribute</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Output Destination Attribute</name>
+                  <required>false</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>false</supportsEl>
+                </value>
+              </entry>
+              <entry>
+                <key>Max Attribute Length</key>
+                <value>
+                  <defaultValue>256</defaultValue>
+                  <description>If routing the output of the stream command to an attribute, the number of characters put to the attribute value will be at most this amount. This is important because attributes are held in memory and large attributes will quickly cause out of memory issues. If the output goes longer than this value, it will truncated to fit. Consider making this smaller if able.</description>
+                  <displayName>Max Attribute Length</displayName>
+                  <dynamic>false</dynamic>
+                  <name>Max Attribute Length</name>
+                  <required>false</required>
+                  <sensitive>false</sensitive>
+                  <supportsEl>false</supportsEl>
+                </value>
+              </entry>
+            </descriptors>
+            <executionNode>ALL</executionNode>
+            <lossTolerant>false</lossTolerant>
+            <penaltyDuration>30 sec</penaltyDuration>
+            <properties>
+              <entry>
+                <key>Command Arguments</key>
+                <value>C:\TwitterSentimentAnalysis\sentiment.py "${tweetedtext}"</value>
+              </entry>
+              <entry>
+                <key>Command Path</key>
+                <value>C:\Python\Python36\python.exe</value>
+              </entry>
+              <entry>
+                <key>Ignore STDIN</key>
+                <value>true</value>
+              </entry>
+              <entry>
+                <key>Working Directory</key>
+              </entry>
+              <entry>
+                <key>Argument Delimiter</key>
+                <value> </value>
+              </entry>
+              <entry>
+                <key>Output Destination Attribute</key>
+              </entry>
+              <entry>
+                <key>Max Attribute Length</key>
+                <value>256</value>
+              </entry>
+            </properties>
+            <runDurationMillis>0</runDurationMillis>
+            <schedulingPeriod>0 sec</schedulingPeriod>
+            <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+            <yieldDuration>1 sec</yieldDuration>
+          </config>
+          <name>Sentiment Analysis using CoreNLP</name>
+          <relationships>
+            <autoTerminate>true</autoTerminate>
+            <name>original</name>
+          </relationships>
+          <relationships>
+            <autoTerminate>false</autoTerminate>
+            <name>output stream</name>
+          </relationships>
+          <style></style>
+          <type>org.apache.nifi.processors.standard.ExecuteStreamCommand</type>
+        </processors>
+      </contents>
+      <name>Twitter Sentiment Analysis</name>
+    </processGroups>
+  </snippet>
+  <timestamp>05/06/2019 12:13:56 IST</timestamp>
+</template>
