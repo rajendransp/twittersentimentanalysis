@@ -1,6 +1,6 @@
 # Twitter Sentiment Analysis
 
-This repository consist of 2 files and are created as a showcase samples for the blog - https://blog.syncfusion.com/?p=38867 
+This repository consist of 2 files and are created as a showcase samples for the blog - https://medium.com/syncfusion/twitter-sentiment-analysis-dashboard-on-event-management-fd97c3154671
 
 1. TwitterSentimentAnalysis.xml - Syncfusion Data integration platform template contains a sample dataflow to gather twitter tweets, process and clean the data, perform sentiment analysis over the text and move the data into SQL Server for Dashboarding requirements.
 Refer this link to deploy the template within Data integration platform - https://help.syncfusion.com/data-integration/how-to/working-with-templates
